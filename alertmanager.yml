@@ -1,0 +1,16 @@
+# alertmanager.yml
+global:
+  # SMTP configuration for email alerts
+  smtp_smarthost: 'mail.kaertala.com:587'
+  smtp_from: 'test@kaertala.com'
+  smtp_auth_username: 'test@kaertala.com'
+  smtp_auth_password: 'udZukd27'
+# Route configuration
+route:
+  receiver: 'example-email'
+  group_by: [alertname]
+# Receivers configuration
+receivers:
+- name: example-email
+  email_configs:
+  - to: 'khair_talap@outlook.com'

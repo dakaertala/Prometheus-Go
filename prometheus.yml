@@ -1,0 +1,35 @@
+# prometheus.yml
+global:
+  scrape_interval: 10s
+  evaluation_interval: 10s
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - alertmanager:9093
+
+# Will be evaluated every 10s
+# according to evaluation_interval
+rule_files:
+  - "rules.yml"
+
+# metrics_path defaults to '/metrics'
+# scheme defaults to 'http'.
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['prometheus:9090']
+    scrape_interval: 5s
+    metrics_path: /metrics
+  - job_name: 'go-app'
+    static_configs:
+      - targets: ['go-app:8000']
+    scrape_interval: 5s
+    metrics_path: /metrics
+  # failing scrape for testing of alerts
+  - job_name: 'test-fail'
+    static_configs:
+      - targets: ['test-fail:9090']
+    scrape_interval: 5s
+    metrics_path: /metrics

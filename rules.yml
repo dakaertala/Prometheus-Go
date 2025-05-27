@@ -1,0 +1,9 @@
+groups:
+# In this case alert has to persist
+# for 1 minute to fire, that is
+# up has to return 0 for 1 minute
+- name: example
+  rules:
+  - alert: InstanceDown
+    expr: up == 0
+    for: 1m
