@@ -9,38 +9,38 @@ import (
 
 // Define prometheus counters
 var (
-	helloWorldsTotal = prometheus.NewCounter(prometheus.CounterOpts{
+	TOTAL_RESPONSES = prometheus.NewCounter(prometheus.CounterOpts{
 		Name: "hello_world_total",
 		Help: "Total number of Hello World responses served",
 	})
 
-	helloWorldsRequested = prometheus.NewCounter(prometheus.CounterOpts{
+	TOTAL_REQUESTS = prometheus.NewCounter(prometheus.CounterOpts{
 		Name: "hello_world_requests",
 		Help: "Total number of Hello World requests received",
 	})
 
-	exceptions = prometheus.NewCounter(prometheus.CounterOpts{
+	EXCEPTIONS = prometheus.NewCounter(prometheus.CounterOpts{
 		Name: "hello_world_exceptions_total",
 		Help: "Exceptions serving Hello World.",
 	})
 )
 
-func init() {
-	// Register metrics with prometheus
-	prometheus.MustRegister(helloWorldsRequested)
-	prometheus.MustRegister(helloWorldsTotal)
-	prometheus.MustRegister(exceptions)
-}
-
 func helloHandler(c *fiber.Ctx) error {
-	helloWorldsRequested.Inc()
+	// Record the request metric
+	TOTAL_REQUESTS.Inc()
+	defer TOTAL_RESPONSES.Inc()
+
+	// Gauge of in progress requests
+	INPROGRESS.Inc()
+	defer INPROGRESS.Dec()
 
 	if rand.Float64() < 0.2 {
-		exceptions.Inc()
+		EXCEPTIONS.Inc()
 		return fiber.NewError(fiber.StatusInternalServerError, "Random exception occured")
 	}
 
-	defer helloWorldsTotal.Inc()
+	// Set the last time handler was invoked
+	LAST.SetToCurrentTime()
 
 	return c.SendString("Hello, World! This is a Fiber server.")
 }

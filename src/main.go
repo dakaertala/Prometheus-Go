@@ -6,8 +6,19 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
+
+func init() {
+	// Register metrics with prometheus
+	prometheus.MustRegister(TOTAL_REQUESTS)
+	prometheus.MustRegister(TOTAL_RESPONSES)
+	prometheus.MustRegister(EXCEPTIONS)
+	prometheus.MustRegister(INPROGRESS)
+	prometheus.MustRegister(LAST)
+	prometheus.MustRegister(CURRENT_TIME)
+}
 
 func main() {
 	// Start Prometheus metrics server on port 8000
@@ -30,6 +41,7 @@ func main() {
 
 	// Define routes
 	app.Get("/", helloHandler)
+	app.Get("/manual", helloHandlerManualTime)
 
 	// You can add more routes here
 	app.Get("/health", func(c *fiber.Ctx) error {
